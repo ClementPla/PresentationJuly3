@@ -51,24 +51,47 @@
 
 			</section>
 
-			<section class="center">
+			<section>
 				<h4>Context</h4>
 				<p>We use 5+1 databases, each with a specific annotation style</p>
 
 				<iframe class='r-strech' src="plots/output/datasets.html" width="1200" height="800"></iframe>
 			</section>
 			<section>
-				<h4>We can quantify the discrepancy</h4>
-				<img src="plots/output/distributions/Cotton_Wool_Spot.png" alt="Lesion discrepancy" width="400">
-				<img src="plots/output/distributions/Exudates.png" alt="Lesion discrepancy" width="400">
-				<img src="plots/output/distributions/Microaneurysms.png" alt="Lesion discrepancy" width="400">
-				<img src="plots/output/distributions/Hemorrhages.png" alt="Lesion discrepancy" width="400">
+				<h4>We can visualize the different distributions</h4>
+				<div class="r-hstack">
+					<div>
+						<p><img src="plots/output/distributions/Cotton_Wool_Spot.png" alt="Lesion discrepancy"
+								width="300">
+						</p>
+						<p>Cotton Wool Spot</p>
+					</div>
+					<div>
+						<p><img src="plots/output/distributions/Exudates.png" alt="Lesion discrepancy" width="300">
+						</p>
+						<p>Exudates</p>
+					</div>
+					<div>
+						<p><img src="plots/output/distributions/Hemorrhages.png" alt="Lesion discrepancy" width="300">
+						</p>
+						<p>Hemorrhages</p>
+					</div>
+					<div>
+						<p><img src="plots/output/distributions/Microaneurysms.png" alt="Lesion discrepancy"
+								width="300">
+						</p>
+						<p>Microaneurysms</p>
+					</div>
+				</div>
 			</section>
 			<section>
 				<h4>Images also vary</h4>
 				<ul>
-					<li>In quality: <img src="plots/output/quality/dataset_quality.png"></li>
-					<li>In size, resolution, number of labellers...: <table>
+					<li>
+						<div class="r-hstack justify-start">In quality: <img
+								src="plots/output/quality/dataset_quality.png"></div>
+					</li>
+					<li>In size, resolution, number of labellers: <table>
 							<tr>
 								<td>Dataset</td>
 								<td>Train</td>
@@ -136,8 +159,8 @@
 				<ul>
 					<li>By estimating the real groundtruth (i.e predicting a Noise Transition Matrix, doing label
 						correction, strong regularization, etc...)</li>
-					<li>By assuming there is no "real groundtruth" but only multiple simultenously plausible
-						hypothesis</li>
+					<li>By assuming there is no " real groundtruth" but only multiple simultenously plausible hypothesis
+					</li>
 				</ul>
 				<img src="plots/output/literature/probUnet.png" width="256">
 				</p>
