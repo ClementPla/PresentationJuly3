@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Multi-style conversion for semantic segmentation of lesions in fundus images by adversarial attacks</title>
+	<meta name="author" content="Clément Playout">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/white.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h3>Multi-style conversion for semantic segmentation of lesions in fundus images by adversarial attacks
+				</h3>
+
+				<p>
+					<small>Paper submitted at Medical Image Analysis</small>
+				</p>
+				<p>
+					<small>Clément Playout, Renaud Duval, Marie Carole Boucher, Farida Cheriet</small>
+				</p>
+			</section>
+			<section>
+				<h4>Context</h4>
+				<ul>
+					<li>Retinal lesions are used to diagnos DR</li>
+
+					<li> We focus on four lesions:
+						<ul>
+							<li>Exudates</li>
+							<li>Cotton wool spot</li>
+							<li>Hemorrhages</li>
+							<li>Microaneurysms</li>
+						</ul>
+					</li>
+				</ul>
+
+			</section>
+
+			<section class="center">
+				<h4>Context</h4>
+				<p>We use 5+1 databases, each with a specific annotation style</p>
+
+				<iframe class='r-strech' src="plots/output/datasets.html" width="1200" height="800"></iframe>
+			</section>
+			<section>
+				<h4>We can quantify the discrepancy</h4>
+				<img src="plots/output/distributions/Cotton_Wool_Spot.png" alt="Lesion discrepancy" width="400">
+				<img src="plots/output/distributions/Exudates.png" alt="Lesion discrepancy" width="400">
+				<img src="plots/output/distributions/Microaneurysms.png" alt="Lesion discrepancy" width="400">
+				<img src="plots/output/distributions/Hemorrhages.png" alt="Lesion discrepancy" width="400">
+			</section>
+			<section>
+				<h4>Images also vary</h4>
+				<ul>
+					<li>In quality: <img src="plots/output/quality/dataset_quality.png"></li>
+					<li>In size, resolution, number of labellers...: <table>
+							<tr>
+								<td>Dataset</td>
+								<td>Train</td>
+								<td>Test</td>
+								<td>Resolution</td>
+								<td># labellers</td>
+							</tr>
+							<tr>
+								<td>IDRiD</td>
+								<td>54</td>
+								<td>27*</td>
+								<td>2848x4288</td>
+								<td>3</td>
+							</tr>
+							<tr>
+								<td>MESSIDOR</td>
+								<td>140</td>
+								<td>60*</td>
+								<td>1500x1500</td>
+								<td>7</td>
+							</tr>
+							<tr>
+								<td>DDR</td>
+								<td>383+149*</td>
+								<td>225*</td>
+								<td>1934x1956</td>
+								<td>6</td>
+							</tr>
+							<tr>
+								<td>RET-LES</td>
+								<td>1115</td>
+								<td>478</td>
+								<td>896x896</td>
+								<td>45</td>
+							</tr>
+							<tr>
+								<td>FGADR</td>
+								<td>1290</td>
+								<td>552</td>
+								<td>1280x1280</td>
+								<td>3</td>
+							</tr>
+						</table>
+					</li>
+				</ul>
+			</section>
+			<section>
+				<h4> What does a model learn from heterogenous/noisy data/labels?</h4>
+				<p>
+				<ul>
+					<li>We are interested in caracterizing the impact of the data heterogeneity on the model's
+						performance.</li>
+					<li>There are multiple incompatible ways to label the same image, and the model has to learn from
+						all of
+						them.</li>
+					<li>Which one(s) will it learn from?</li>
+					<li>Can we control its behavior?</li>
+				</ul>
+				</p>
+			</section>
+			<section>
+				<h4>Relevant literature</h4>
+				<p>The literature often frames this problem under the scope of noisy labels</p>
+				<p>There are mainly two ways to deal with it:
+				<ul>
+					<li>By estimating the real groundtruth (i.e predicting a Noise Transition Matrix, doing label
+						correction, strong regularization, etc...)</li>
+					<li>By assuming there is no "real groundtruth" but only multiple simultenously plausible
+						hypothesis</li>
+				</ul>
+				<img src="plots/output/literature/probUnet.png" width="256">
+				</p>
+				<small>That Label's got Style: Handling Label Style Bias for Uncertain Image Segmentation
+					Zepf, Kilian Maurus; Petersen, Eike Willi; Frellsen, Jes; Feragen, Aasa</small>
+			</section>
+			<section>
+				<h4>Our approach</h4>
+				<p>We train a (regular) model on all the datasets combined</p>
+				<p>We observe what is going on</p>
+				<p>We then propose a strategy to adjust the style of a model's prediction</p>
+			</section>
+			<section>
+				<h4>Finding an effective training strategy</h4>
+				<p>We ran hundreds of "sweeps" to the find optimal training hyperparameters using Bayesian Optimization
+				</p>
+
+				<img src="plots/output/methodology/HP-Tuning.png" width="800">
+				<img src="plots/output/methodology/architecture.png" width="800">
+
+			</section>
+			<section>
+				<h4>Cross-datasets evaluation</h4>
+				<p>With the chosen architecture, we evaluate its performance on the five test sets</p>
+				<p>As a baseline, we use the same architecture trained on one dataset only</p>
+				<img src="plots/output/results/comparativePerformance.png" width="800">
+			</section>
+
+			<section>
+				<h4>An unexpected behavior
+				</h4>
+				<iframe class='r-strech' src="plots/output/results/segment.html" width="1200" height="800"></iframe>
+			</section>
+			<section>
+				<h4>Spontaneous style adaptation</h4>
+				<ul>
+					<li>The fact that the model changes its style indicates that it has learnt a systematical "database
+						bias"
+					</li>
+					<li>Even on <b>test</b> sets, therefore, the image itself betrays its origin</li>
+					<li>We try to induce the bias naively by altering the image:</li>
+				</ul>
+				<img src="plots/output/results/bias_sensitivity.png">
+			</section>
+			<section>
+				<h4>Learnability of the bias</h4>
+				<ul>
+					<li>We know there is something in the image that betrays its origin</li>
+					<li>It is not "obvious"</li>
+					<li>Let's train a secondary model to recognize a database based on the features of the
+						segmentation model</li>
+					<li>We use the concept of Linear Probe</li>
+				</ul>
+			</section>
+			<section>
+				<h4>Learnability of the bias</h4>
+				<p>We test the accuracy of the probe with respect to its position in the segmentation model</p>
+				<p><small>Training a linear probe is very fast</small></p>
+				<img src="plots/output/results/balanced_acc_scores.png">
+				<p><small>And we obtain almost a perfect score</small></p>
+			</section>
+			<section>
+				<h4>Inducing a bias</h4>
+				<p>So the model has a "recognition bias"</p>
+				<p>It changes its segmentation style based on the recognized origin of the image</p>
+				<p>What if we fool its recognition capability?</p>
+				<small>
+					<ul>
+						<li>but can we do it...</li>
+						<li>and will it change the segmentation style?</li>
+					</ul>
+				</small>
+				<p>To fool the probe, we propose to use Targeted Adversarial Attacks</p>
+				<img src="plots/output/methodology/graphicsSummary.png" width="800">
+				\[
+				x_{perturbed} = x - \epsilon \cdot \text{sign}(\nabla_x \mathcal{L}(y_x, t))
+				\]
+			</section>
+			<section>
+				<h4>Does it fool the probe?</h4>
+				<img src="plots/output/results/probe_fooling.png">
+				<p><small>Percentage of case were the probe predicts "i" on 3665 images from another database</small>
+				</p>
+				<p><small>So it is very easy to fool a linear probe</small></p>
+			</section>
+			<section>
+				<h4>Does it fool the segmentation model?</h4>
+				<img src="plots/output/results/conversion.png">
+				<p><small><b>Left column:</b> original image and its segmentation, <b>right column:</b>
+						modified
+						image and
+						its new segmentation</small>
+				</p>
+			</section>
+			<section>
+				<h4>But does it change the image?</h4>
+				<p>We train a new model to do DR classification. The model is a ConvNext, its predicts the disease on a
+					scale from 0 to 5 continuously</p>
+				<p>We evaluate the model on the original and modified images</p>
+				<img src="plots/output/results/DR_grading_before_after_conversion.png">
+				<p><small>The RMSE is way below the threshold to modify the predicted grade</small></p>
+			</section>
+			<section>
+				<h4>Comparison with SOTA</h4>
+				<p>We train a Conditional Stochastic Segmentation Network (C-SSN) using the same network architecture
+				</p>
+				<img src="plots/output/results/CSSN_compare.png">
+			</section>
+			<section>
+				<h4>Continuous style interpolation</h4>
+				<p>We can interpolate between the styles of two databases. \[ x_{inter} = (1-\alpha) \cdot x + \alpha
+					\cdot (x \rightarrow j) \]</p>
+
+				<img src="plots/output/results/soft_adversarial.gif">
+			</section>
+			<section>
+				<h4>But do we have any clinical use for that?</h4>
+				<ul>
+					We propose two applications of our methodology
+					<li>Improving the performance of a model on external data</li>
+					<li>Estimating the uncertainty in the segmentation maps</li>
+				</ul>
+			</section>
+			<section>
+				<h4>Improving the performance of a model on external data</h4>
+				<p>We train a model on a dataset, and we want to improve its performance on another dataset</p>
+				<p>We can use the adversarial attack to convert the style of the model's prediction to the target
+					dataset</p>
+				<p>It is a form of domain adaptation</p>
+				<p>We use a validation subset to estimate the appropriate conversion (per lesion)</p>
+
+				<div class="r-stack">
+					<img class="fragment fade-out" data-fragment-index="0"
+						src="plots/output/results/tjdr_validation_set.png" width="450" />
+					<img class="fragment current-visible" data-fragment-index="0"
+						src="plots/output/results/tjdr_test_set.png" width="450" />
+				</div>
+			</section>
+			<section>
+				<h4>Estimating the uncertainty in the segmentation maps</h4>
+				<p>For each pixel, we can estimate the uncertainty of the model's prediction</p>
+				<p>We use Monte-Carlo sampling by parametrizing $\alpha$ as a random variable</p>
+				<p>
+					\[
+					x_{\alpha} = (1-\alpha) \cdot x + \alpha \cdot (x \rightarrow j) \text{ with } \alpha \sim
+					\mathcal{U}(0, 1)
+					\]
+					The uncertanty map is the std of the predictions:
+					\[ U_A = \sigma_{\alpha} (M(x_\alpha)) \]
+				</p>
+			</section>
+			<section>
+				Uncertainty estimation provides insight on the ambiguous regions of the image
+				<div class="r-stack">
+					<img class="fragment" src="plots/output/results/example_usecase.png" width="800">
+					<img class="fragment" src="plots/output/results/example_MA_uncertainty.png">
+				</div>
+			</section>
+			<section>
+				<h4>Conclusion</h4>
+				<p>We propose a method to convert the style of a model's prediction</p>
+				<p>We show that it is possible to fool a model's recognition bias</p>
+				<p>We show that it is possible to estimate the uncertainty of the model's prediction</p>
+				<p>We show that it is possible to improve the performance of a model on external data</p>
+				<p>We show that it is possible to interpolate between the styles of two databases</p>
+			</section>
+			<section>
+				<h4>Thank you!</h4>
+
+				<h4>Questions?</h4>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			slideNumber: 'c/t',
+			hash: true,
+			width: 1800,
+			height: 960,
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX]
+		});
+	</script>
+</body>
+
+</html>
